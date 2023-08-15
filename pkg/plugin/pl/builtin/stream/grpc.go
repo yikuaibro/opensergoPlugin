@@ -2,6 +2,8 @@ package stream_plugin
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/hashicorp/go-plugin"
 	pb "github.com/opensergo/opensergo-control-plane/pkg/plugin/proto/stream"
 	"google.golang.org/grpc"
@@ -81,7 +83,7 @@ type GRPCHelloServer struct {
 }
 
 func (g *GRPCHelloServer) Say(ctx context.Context, req *pb.HelloReq) (*pb.HelloResp, error) {
-	resp := g.Impl.Say(req.Pre)
+	resp := g.Impl.Say(fmt.Sprint(req.Pre, " GRPCHelloServer"))
 	return &pb.HelloResp{
 		Resp: resp,
 	}, nil
