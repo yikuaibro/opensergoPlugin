@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin/stream"
 	"log"
+
+	stream_plugin "github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin/stream"
 
 	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl"
 	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin"

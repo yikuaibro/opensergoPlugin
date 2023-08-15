@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin/stream"
+	stream_plugin "github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin/stream"
 	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/plugin"
 )
 

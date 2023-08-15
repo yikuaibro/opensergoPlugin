@@ -3,6 +3,7 @@ package stream_plugin
 import (
 	"context"
 	"fmt"
+
 	"github.com/hashicorp/go-plugin"
 	pb "github.com/opensergo/opensergo-control-plane/pkg/plugin/proto/stream"
 	"google.golang.org/grpc"
