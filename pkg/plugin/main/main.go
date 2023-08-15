@@ -1,12 +1,11 @@
 package main
 
 import (
-	"context"
+	stream_plugin "github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin/stream"
 	"log"
 
 	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl"
 	"github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin"
-	pb "github.com/opensergo/opensergo-control-plane/pkg/plugin/proto/stream"
 )
 
 //nolint:gosimple
@@ -28,17 +27,18 @@ func main() {
 	if err != nil {
 		log.Fatalln("Error:", err.Error())
 	}
-	raw, ok := client.(pb.StreamGreeterClient)
+	raw, ok := client.(stream_plugin.Stream)
 	if !ok {
 		log.Fatalln("Error: can't convert rpc plugin to normal wrapper")
 	}
 
-	ctx := context.Background()
-	greet, err := raw.Greet(ctx, &pb.StreamReq{})
+	sa := &say{}
+	greet, err := raw.Greeter("这是一个前缀", sa)
 	if err != nil {
 		log.Printf("Error: %s\n", err.Error())
 	}
-	log.Println("Greet:", greet)
+	log.Println("Greeter:", greet)
+
 	for {
 		select {
 		case <-pluginServer.ShutdownCh:
@@ -51,4 +51,11 @@ func main() {
 		}
 	}
 
+}
+
+type say struct {
+}
+
+func (s *say) Say(ss string) string {
+	return ss + "这是一个后缀v2"
 }
