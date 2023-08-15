@@ -10,25 +10,30 @@ import (
 )
 
 type StreamPluginServer struct {
-	pb.UnimplementedStreamGreeterServer
 }
 
-var _ pb.StreamGreeterServer = (*StreamPluginServer)(nil)
+var _ Stream = (*StreamPluginServer)(nil)
 
-func (s StreamPluginServer) Greet(ctx context.Context, req *pb.StreamReq) (*pb.StreamResp, error) {
-	fmt.Println("GreetGreetGreet")
-	return &pb.StreamResp{
-		Greet: "testtest",
-	}, nil
+func (s StreamPluginServer) Greeter(name string, h Hello) (string, error) {
+	sp := fmt.Sprintf("pre:%s, h:%s\n", name, h.Say("test"))
+	return sp, nil
+}
+
+type Hello interface {
+	Say(s string) string
+}
+
+type Stream interface {
+	Greeter(name string, h Hello) (string, error)
 }
 
 type StreamPlugin struct {
 	plugin.Plugin
 
-	impl pb.StreamGreeterServer
+	impl Stream
 }
 
-func NewStreamPluginServiceServer(impl pb.StreamGreeterServer) (*StreamPlugin, error) {
+func NewStreamPluginServiceServer(impl Stream) (*StreamPlugin, error) {
 	if impl == nil {
 		return nil, fmt.Errorf("empty underlying stream plugin passed in")
 	}
@@ -38,10 +43,16 @@ func NewStreamPluginServiceServer(impl pb.StreamGreeterServer) (*StreamPlugin, e
 }
 
 func (h *StreamPlugin) GRPCServer(broker *plugin.GRPCBroker, s *grpc.Server) error {
-	pb.RegisterStreamGreeterServer(s, h.impl)
+	pb.RegisterStreamGreeterServer(s, &GRPCServer{
+		Impl:   h.impl,
+		broker: broker,
+	})
 	return nil
 }
 
 func (h *StreamPlugin) GRPCClient(ctx context.Context, broker *plugin.GRPCBroker, c *grpc.ClientConn) (any, error) {
-	return pb.NewStreamGreeterClient(c), nil
+	return &GRPCClient{
+		client: pb.NewStreamGreeterClient(c),
+		broker: broker,
+	}, nil
 }

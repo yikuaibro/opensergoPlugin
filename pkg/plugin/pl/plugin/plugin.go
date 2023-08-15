@@ -8,7 +8,6 @@ import (
 	stream_plugin "github.com/opensergo/opensergo-control-plane/pkg/plugin/pl/builtin/stream"
 
 	"github.com/hashicorp/go-plugin"
-	pb "github.com/opensergo/opensergo-control-plane/pkg/plugin/proto/stream"
 )
 
 // HandshakeConfig is a shared config that can be used regardless of plugin, to
@@ -26,7 +25,7 @@ func ServePlugin(svc any, opt ...Option) error {
 	}
 
 	plugins := make(map[string]plugin.Plugin)
-	if streamSvc, ok := svc.(pb.StreamGreeterServer); ok {
+	if streamSvc, ok := svc.(stream_plugin.Stream); ok {
 		streamServiceServer, err := stream_plugin.NewStreamPluginServiceServer(streamSvc)
 		if err != nil {
 			return err
